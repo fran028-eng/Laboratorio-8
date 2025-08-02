@@ -1,0 +1,57 @@
+Comandos Utilizados Practica 1: Instalacion y configuracion de Docker 
+
+ssh root@159.223.169.229  #accediento a mi dropplet
+
+#Actualizar el sistema operativo
+apt update && apt upgrade -y
+
+
+#Instalar Docker
+apt install docker.io -y
+
+
+#Habilitar y arrancar Docker
+systemctl enable docker
+systemctl start docker
+systemctl status docker
+
+#Descargar la imagen de NGINX
+
+docker pull nginx
+
+#Crear un volumen local
+mkdir -p /home/website
+
+
+#Crear la página web (index.html)
+nano /home/website/index.html
+
+#contenido:
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Mi Web Docker</title>
+</head>
+<body>
+  <h1>Francisco Ortiz - 2019-8529</h1>
+</body>
+</html>
+
+#Ejecutar contenedor Docker con NGINX
+
+docker run -d \
+  --name nginx-web \
+  -p 8888:80 \
+  -v /home/website:/usr/share/nginx/html \
+  nginx
+
+
+#Verifica que está corriendo
+
+#Probar en el navegador
+
+http://159.223.169.229:8888
+
+
+
+
