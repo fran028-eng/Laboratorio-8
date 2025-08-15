@@ -1,32 +1,44 @@
 Comandos Utilizados Practica 1: Instalacion y configuracion de Docker 
 
-ssh root@159.223.169.229  #accediento a mi dropplet
 
-#Actualizar el sistema operativo
+#Instalar Docker (recomendado desde repos oficial)
+
+
+# 1. Acceder al servidor
+ssh root@159.223.169.229
+
+# 2. Actualizar sistema
 apt update && apt upgrade -y
 
+# 3. Instalar dependencias
+apt install apt-transport-https ca-certificates curl software-properties-common -y
 
-#Instalar Docker
-apt install docker.io -y
+# 4. Agregar clave GPG oficial
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+
+# 5. Agregar repo Docker oficial
+add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+
+# 6. Instalar Docker CE
+apt update && apt install docker-ce docker-ce-cli containerd.io -y
+
+# 7. Habilitar y arrancar Docker
+systemctl enable --now docker
 
 
-#Habilitar y arrancar Docker
-systemctl enable docker
-systemctl start docker
-systemctl status docker
 
-#Descargar la imagen de NGINX
+#Desplegar NGINX con volumen persistente
 
-docker pull nginx
 
-#Crear un volumen local
+
+# 1. Descargar imagen NGINX
+docker pull nginx:latest
+
+# 2. Crear directorio para la web
 mkdir -p /home/website
 
-
-#Crear la página web (index.html)
-nano /home/website/index.html
-
-#contenido:
+# 3. Crear página HTML
+cat <<EOF > /home/website/index.html
 <!DOCTYPE html>
 <html>
 <head>
@@ -36,22 +48,23 @@ nano /home/website/index.html
   <h1>Francisco Ortiz - 2019-8529</h1>
 </body>
 </html>
+EOF
 
-#Ejecutar contenedor Docker con NGINX
-
+# 4. Ejecutar contenedor
 docker run -d \
   --name nginx-web \
   -p 8888:80 \
   -v /home/website:/usr/share/nginx/html \
   nginx
 
+# 5. Verificar contenedor
+docker ps
 
-#Verifica que está corriendo
-
-#Probar en el navegador
-
-http://159.223.169.229:8888
-
+# 6. Probar acceso desde servidor
+curl http://localhost:8888
 
 
 
+Buenas prácticas
+
+Usar docker ps -a para ver contenedores detenidos y logs con docker logs nginx-web.
