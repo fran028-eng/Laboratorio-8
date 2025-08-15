@@ -1,20 +1,15 @@
 Comandos Utilizados Practica 2 Instalacion de Portainer 
 
+---Instalar y ejecutar Portainer---
 
-#Descargar la imagen de Portainer
 
-docker pull portainer/portainer-ce
+# 1. Descargar imagen Portainer CE
+docker pull portainer/portainer-ce:latest
 
-#Verificamos
-
-docker images
-
-#Crear y ejecutar el contenedor de Portainer
-
+# 2. Crear volumen persistente
 docker volume create portainer_data
 
-#Lo ejecutamos
-
+# 3. Ejecutar Portainer
 docker run -d \
   -p 9443:9443 \
   -p 8000:8000 \
@@ -22,17 +17,19 @@ docker run -d \
   --restart=always \
   -v /var/run/docker.sock:/var/run/docker.sock \
   -v portainer_data:/data \
-  portainer/portainer-ce
+  portainer/portainer-ce:latest
 
-
-#Verificamos la creación 
-
+# 4. Verificar contenedor
 docker ps
 
-# Acceder a la interfaz web de Portainer
+# 5. (Opcional) Revisar logs
+docker logs -f portainer
+
+
+
+Acceder a Portainer
+
+Abrir en navegador:
 
 
 https://159.223.169.229:9443
-
-
-
