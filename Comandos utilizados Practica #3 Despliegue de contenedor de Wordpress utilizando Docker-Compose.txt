@@ -1,55 +1,53 @@
 Comandos utilizados Practica #3: Despliegue de contenedor de Wordpress utilizando Docker-Compose 
 
+---Instalar Docker Compose---
 
-# Instalar Docker Compos
-
+# 1. Descargar Docker Compose binario (versión específica estable)
 sudo curl -L "https://github.com/docker/compose/releases/download/v2.27.0/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
 
-
-#Luego le damos permisos de ejecución
-
+# 2. Dar permisos
 sudo chmod +x /usr/local/bin/docker-compose
 
-#Verifica que funciona:
+# 3. Verificar instalación
 docker-compose --version
 
-#crear una carpeta para alojar nuestro proyecto de WordPress:
 
+---Configurar y desplegar WordPress---
+
+# 1. Crear carpeta de proyecto
 mkdir ~/wordpress-docker
 cd ~/wordpress-docker
 
-
-#. Crear archivo docker-compose.yml
-
+# 2. Crear archivo docker-compose.yml
 nano docker-compose.yml
 
+---Contenido---
 
-#contenido:
 
 version: '3.8'
 
 services:
   wordpress:
-    image: wordpress:latest
+    image: wordpress:6.5
     ports:
       - "8080:80"
     environment:
       WORDPRESS_DB_HOST: db
-      WORDPRESS_DB_USER: francisco
-      WORDPRESS_DB_PASSWORD: 12345
-      WORDPRESS_DB_NAME: wordpressdb
+      WORDPRESS_DB_USER: ${WORDPRESS_DB_USER}
+      WORDPRESS_DB_PASSWORD: ${WORDPRESS_DB_PASSWORD}
+      WORDPRESS_DB_NAME: ${WORDPRESS_DB_NAME}
     volumes:
       - wordpress_data:/var/www/html
     depends_on:
       - db
 
   db:
-    image: mysql:5.7
+    image: mysql:5.7.44
     environment:
-      MYSQL_DATABASE: wordpressdb
-      MYSQL_USER: francisco
-      MYSQL_PASSWORD: 12345
-      MYSQL_ROOT_PASSWORD: rootpass
+      MYSQL_DATABASE: ${WORDPRESS_DB_NAME}
+      MYSQL_USER: ${WORDPRESS_DB_USER}
+      MYSQL_PASSWORD: ${WORDPRESS_DB_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
     volumes:
       - db_data:/var/lib/mysql
 
@@ -58,17 +56,35 @@ volumes:
   db_data:
 
 
-#Desplegar WordPress con Docker Compose
+-----------------------
 
+
+---#Archivo .env (en la misma carpeta)
+WORDPRESS_DB_USER=francisco
+WORDPRESS_DB_PASSWORD=12345
+WORDPRESS_DB_NAME=wordpressdb
+MYSQL_ROOT_PASSWORD=rootpass
+
+
+
+----Despliegue
+
+# 3. Levantar contenedores
 docker-compose up -d
 
-#Verifica 
-
+# 4. Verificar que corren
 docker ps
 
+# 5. Revisar logs si algo falla
+docker-compose logs -f
 
-#Acceder a WordPress desde navegador
 
-http://159.223.169.229:8080
+----Acceder a WordPress----
+
+Navegador → http://159.223.169.229:8080
+
+Configurar idioma, usuario admin, contraseña, email.
+
+Guardar y acceder al panel de administración.
 
 
